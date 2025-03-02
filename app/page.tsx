@@ -106,17 +106,15 @@ function SocialFeed({ type }: { type: 'twitter' | 'linkedin' }) {
           <div className="h-[400px] flex flex-col items-center justify-center p-6 text-center" aria-live="polite">
             <div className="mb-4 text-[#f03a37] font-bold text-xl">Twitter Feed Preview</div>
             <p className="text-gray-700 mb-3">This Twitter embed will appear in production.</p>
-            <p className="text-gray-500 text-sm">Using official Twitter embed API</p>
-            <div className="mt-6 p-4 border border-gray-200 rounded-lg w-full max-w-md">
-              <div className="flex items-center mb-3">
-                <div className="w-10 h-10 rounded-full bg-gray-200 mr-3"></div>
-                <div>
-                  <div className="font-bold">G1 Ventures</div>
-                  <div className="text-gray-500 text-sm">@G1_Ventures</div>
-                </div>
-              </div>
-              <div className="h-px bg-gray-200 my-3"></div>
-              <p className="text-gray-700">Sample tweet content from G1 Ventures will appear here in production.</p>
+            <p className="text-gray-500 text-sm mb-4">Required: Twitter Developer Access</p>
+            <div className="p-4 bg-gray-100 rounded-lg text-left text-sm max-w-md">
+              <p className="font-medium mb-2">To make this work:</p>
+              <ol className="list-decimal pl-5 space-y-1">
+                <li>Sign up for a Twitter Developer account</li>
+                <li>Create a project and app at developer.twitter.com</li>
+                <li>Enable the embed widget for your app</li>
+                <li>Ensure @G1_Ventures has public tweets</li>
+              </ol>
             </div>
           </div>
         </div>
@@ -136,32 +134,21 @@ function SocialFeed({ type }: { type: 'twitter' | 'linkedin' }) {
         )}
         {isLoaded && (
           <div className="twitter-embed-container relative" style={{height: '500px'}} aria-label="Twitter Timeline">
-            {/* Official Twitter Timeline embed */}
-            <div
-              style={{
-                width: '100%',
-                height: '100%',
-                overflow: 'auto',
-                borderRadius: '12px'
-              }}
+            {/* Standard Twitter Timeline embed */}
+            <a 
+              className="twitter-timeline" 
+              data-height="500"
+              data-theme="light"
+              href="https://twitter.com/G1_Ventures"
+              data-chrome="noheader nofooter noborders transparent"
             >
-              <a 
-                className="twitter-timeline" 
-                data-height="500"
-                data-theme="light"
-                href="https://twitter.com/G1_Ventures?ref_src=twsrc%5Etfw"
-              >
-                Tweets by G1_Ventures
-              </a>
-              {/* Load Twitter widget.js */}
-              {typeof window !== 'undefined' && (
-                <script
-                  async
-                  src="https://platform.twitter.com/widgets.js"
-                  charSet="utf-8"
-                ></script>
-              )}
-            </div>
+              Tweets by G1_Ventures
+            </a>
+            <script 
+              async 
+              src="https://platform.twitter.com/widgets.js" 
+              charSet="utf-8"
+            ></script>
           </div>
         )}
       </div>
@@ -177,24 +164,22 @@ function SocialFeed({ type }: { type: 'twitter' | 'linkedin' }) {
         <div className="h-[400px] flex flex-col items-center justify-center p-6 text-center" aria-live="polite">
           <div className="mb-4 text-[#0077b5] font-bold text-xl">LinkedIn Company Page Preview</div>
           <p className="text-gray-700 mb-3">This LinkedIn embed will appear in production.</p>
-          <p className="text-gray-500 text-sm">Embed URL: https://www.linkedin.com/company/embed/g1vc/</p>
-          <div className="mt-6 p-4 border border-gray-200 rounded-lg w-full max-w-md">
-            <div className="flex items-center mb-3">
-              <div className="w-10 h-10 rounded-full bg-gray-200 mr-3"></div>
-              <div>
-                <div className="font-bold">G1 Ventures</div>
-                <div className="text-gray-500 text-sm">Investment Management • Blockchain</div>
-              </div>
-            </div>
-            <div className="h-px bg-gray-200 my-3"></div>
-            <p className="text-gray-700">G1 Ventures company updates will appear here in production.</p>
+          <p className="text-gray-500 text-sm mb-4">Required: LinkedIn Developer Access</p>
+          <div className="p-4 bg-gray-100 rounded-lg text-left text-sm max-w-md">
+            <p className="font-medium mb-2">To make this work:</p>
+            <ol className="list-decimal pl-5 space-y-1">
+              <li>Create a LinkedIn Developer application</li>
+              <li>Request the "Share on LinkedIn" and "Sign In with LinkedIn" products</li>
+              <li>Set proper OAuth permissions and redirect URLs</li>
+              <li>Use your company ID: 26564404</li>
+            </ol>
           </div>
         </div>
       </div>
     );
   }
   
-  // Production LinkedIn embed
+  // Production LinkedIn embed - using standard company plugin
   return (
     <div className="min-h-[400px] bg-white rounded-xl shadow-sm overflow-hidden">
       {!isLoaded && (
@@ -207,8 +192,9 @@ function SocialFeed({ type }: { type: 'twitter' | 'linkedin' }) {
       )}
       {isLoaded && (
         <div className="linkedin-embed-container" style={{height: '500px', overflow: 'auto'}} aria-label="LinkedIn Company Page">
+          {/* Using LinkedIn's company embed with specific company ID */}
           <iframe 
-            src="https://www.linkedin.com/company/embed/g1vc/"
+            src="https://www.linkedin.com/company/embed/26564404/"
             style={{
               width: '100%',
               height: '100%', 
@@ -220,6 +206,36 @@ function SocialFeed({ type }: { type: 'twitter' | 'linkedin' }) {
             frameBorder="0"
             allowFullScreen
           ></iframe>
+          
+          {/* LinkedIn's JavaScript SDK for enhanced functionality */}
+          <script
+            type="text/javascript"
+            dangerouslySetInnerHTML={{
+              __html: `
+                window.linkedInLoad = function() {
+                  // Initialize the LinkedIn API
+                  if (window.IN && typeof window.IN.init === 'function') {
+                    window.IN.init({
+                      api_key: 'YOUR_LINKEDIN_API_KEY', // Replace with your LinkedIn API key
+                      authorize: true,
+                      onLoad: 'onLinkedInLoad'
+                    });
+                  }
+                };
+                
+                // Load the LinkedIn SDK
+                (function() {
+                  const script = document.createElement('script');
+                  script.type = 'text/javascript';
+                  script.src = 'https://platform.linkedin.com/in.js';
+                  script.async = true;
+                  script.defer = true;
+                  script.onload = window.linkedInLoad;
+                  document.getElementsByTagName('head')[0].appendChild(script);
+                })();
+              `
+            }}
+          />
         </div>
       )}
     </div>
