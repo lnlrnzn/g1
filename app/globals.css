@@ -1,0 +1,166 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(to bottom, transparent, rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb));
+  font-family: var(--font-barlow-condensed), sans-serif;
+}
+
+@layer base {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  span,
+  a,
+  button {
+    font-family: var(--font-barlow-condensed), sans-serif;
+  }
+
+  h1 {
+    @apply text-4xl md:text-5xl lg:text-6xl font-bold leading-tight;
+  }
+  h2 {
+    @apply text-3xl md:text-4xl lg:text-5xl font-bold leading-tight;
+  }
+  h3 {
+    @apply text-2xl md:text-3xl lg:text-4xl font-bold leading-tight;
+  }
+  p {
+    @apply text-base md:text-lg lg:text-xl leading-relaxed;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* Minimalistic animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInFromBottom {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInFromLeft {
+  from {
+    transform: translateX(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInFromRight {
+  from {
+    transform: translateX(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.animate-slideInFromBottom {
+  animation: slideInFromBottom 0.5s ease-out;
+}
+
+.animate-slideInFromLeft {
+  animation: slideInFromLeft 0.5s ease-out;
+}
+
+.animate-slideInFromRight {
+  animation: slideInFromRight 0.5s ease-out;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Offset for fixed header */
+html {
+  scroll-padding-top: 120px; /* Increased to account for header height and some extra space */
+}
+
+/* Improved focus styles for accessibility */
+a:focus,
+button:focus {
+  outline: 2px solid rgba(240, 58, 55, 0.5);
+  outline-offset: 2px;
+}
+
+/* Improved text contrast */
+.text-gray-600 {
+  @apply text-gray-700;
+}
+
+.text-gray-400 {
+  @apply text-gray-300;
+}
+
+/* Smooth scrolling and section spacing */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem; /* Adjust this value based on your header height */
+}
+
+section {
+  scroll-margin-top: 5rem; /* Adjust this value based on your header height */
+}
+
+/* Responsive font sizes for the hero section */
+@media (max-width: 640px) {
+  .text-\[120px\] {
+    font-size: 80px;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  .text-\[160px\] {
+    font-size: 120px;
+  }
+}
+
