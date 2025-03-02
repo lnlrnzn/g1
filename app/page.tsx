@@ -86,14 +86,37 @@ function useReducedMotion() {
 function SocialFeed({ type }: { type: 'twitter' | 'linkedin' }) {
   const [isLoaded, setIsLoaded] = useState(false);
   
+  // Twitter script loading reference
+  const twitterScriptRef = React.useRef<boolean>(false);
+  
   useEffect(() => {
     // Delay loading embeds for better performance
     const timer = setTimeout(() => {
       setIsLoaded(true);
+      
+      // Load Twitter widgets if needed
+      if (type === 'twitter' && isLoaded && !twitterScriptRef.current) {
+        twitterScriptRef.current = true;
+        
+        // Load Twitter widget script properly
+        const script = document.createElement('script');
+        script.src = 'https://platform.twitter.com/widgets.js';
+        script.async = true;
+        script.charset = 'utf-8';
+        
+        // Initialize Twitter widgets after script loads
+        script.onload = () => {
+          if (window.twttr && window.twttr.widgets) {
+            window.twttr.widgets.load();
+          }
+        };
+        
+        document.body.appendChild(script);
+      }
     }, 1000);
     
     return () => clearTimeout(timer);
-  }, []);
+  }, [isLoaded, type]);
   
   // Check if we're in development mode
   const isDevelopment = process.env.NODE_ENV === 'development';
@@ -106,15 +129,12 @@ function SocialFeed({ type }: { type: 'twitter' | 'linkedin' }) {
           <div className="h-[400px] flex flex-col items-center justify-center p-6 text-center" aria-live="polite">
             <div className="mb-4 text-[#f03a37] font-bold text-xl">Twitter Feed Preview</div>
             <p className="text-gray-700 mb-3">This Twitter embed will appear in production.</p>
-            <p className="text-gray-500 text-sm mb-4">Required: Twitter Developer Access</p>
+            <p className="text-gray-500 text-sm mb-4">Using Twitter's official embed widget</p>
             <div className="p-4 bg-gray-100 rounded-lg text-left text-sm max-w-md">
-              <p className="font-medium mb-2">To make this work:</p>
-              <ol className="list-decimal pl-5 space-y-1">
-                <li>Sign up for a Twitter Developer account</li>
-                <li>Create a project and app at developer.twitter.com</li>
-                <li>Enable the embed widget for your app</li>
-                <li>Ensure @G1_Ventures has public tweets</li>
-              </ol>
+              <p className="font-medium mb-2">Twitter widget will be rendered here in production</p>
+              <code className="block bg-gray-200 p-2 rounded text-xs overflow-x-auto whitespace-pre-wrap">
+                &lt;a class="twitter-timeline" href="https://twitter.com/G1_Ventures?ref_src=twsrc%5Etfw"&gt;Tweets by G1_Ventures&lt;/a&gt;
+              </code>
             </div>
           </div>
         </div>
@@ -132,23 +152,22 @@ function SocialFeed({ type }: { type: 'twitter' | 'linkedin' }) {
             </div>
           </div>
         )}
+        
         {isLoaded && (
-          <div className="twitter-embed-container relative" style={{height: '500px'}} aria-label="Twitter Timeline">
-            {/* Standard Twitter Timeline embed */}
+          <div className="twitter-embed-container relative p-4" style={{minHeight: '500px'}} aria-label="Twitter Timeline">
+            {/* 
+              Using the exact code format provided by Twitter
+              The script loading is handled in the useEffect
+            */}
             <a 
               className="twitter-timeline" 
+              href="https://twitter.com/G1_Ventures?ref_src=twsrc%5Etfw"
               data-height="500"
               data-theme="light"
-              href="https://twitter.com/G1_Ventures"
               data-chrome="noheader nofooter noborders transparent"
             >
               Tweets by G1_Ventures
             </a>
-            <script 
-              async 
-              src="https://platform.twitter.com/widgets.js" 
-              charSet="utf-8"
-            ></script>
           </div>
         )}
       </div>
@@ -240,6 +259,17 @@ function SocialFeed({ type }: { type: 'twitter' | 'linkedin' }) {
       )}
     </div>
   );
+}
+
+// Add TypeScript interface for Window with twttr property
+declare global {
+  interface Window {
+    twttr: {
+      widgets: {
+        load: (element?: HTMLElement) => void;
+      };
+    };
+  }
 }
 
 export default function Home() {
