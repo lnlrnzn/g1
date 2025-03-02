@@ -88,6 +88,8 @@ function SocialFeed({ type }: { type: 'twitter' | 'linkedin' }) {
   
   // Twitter script loading reference
   const twitterScriptRef = React.useRef<boolean>(false);
+  // LinkedIn script loading reference
+  const linkedinScriptRef = React.useRef<boolean>(false);
   
   useEffect(() => {
     // Delay loading embeds for better performance
@@ -110,6 +112,19 @@ function SocialFeed({ type }: { type: 'twitter' | 'linkedin' }) {
             window.twttr.widgets.load();
           }
         };
+        
+        document.body.appendChild(script);
+      }
+      
+      // Load LinkedIn widgets if needed
+      if (type === 'linkedin' && isLoaded && !linkedinScriptRef.current) {
+        linkedinScriptRef.current = true;
+        
+        // Load SociableKit LinkedIn widget script
+        const script = document.createElement('script');
+        script.src = 'https://widgets.sociablekit.com/linkedin-page-posts/widget.js';
+        script.async = true;
+        script.defer = true;
         
         document.body.appendChild(script);
       }
@@ -174,87 +189,43 @@ function SocialFeed({ type }: { type: 'twitter' | 'linkedin' }) {
     );
   }
   
-  // LinkedIn embeds
+  // LinkedIn embeds - updated to use SociableKit
   
   // Development placeholder for LinkedIn
   if (isDevelopment) {
     return (
       <div className="min-h-[400px] bg-white rounded-xl shadow-sm overflow-hidden">
         <div className="h-[400px] flex flex-col items-center justify-center p-6 text-center" aria-live="polite">
-          <div className="mb-4 text-[#0077b5] font-bold text-xl">LinkedIn Company Page Preview</div>
-          <p className="text-gray-700 mb-3">This LinkedIn embed will appear in production.</p>
-          <p className="text-gray-500 text-sm mb-4">Required: LinkedIn Developer Access</p>
+          <div className="mb-4 text-[#0077b5] font-bold text-xl">LinkedIn Feed Preview</div>
+          <p className="text-gray-700 mb-3">LinkedIn posts will appear here in production.</p>
+          <p className="text-gray-500 text-sm mb-4">Using SociableKit LinkedIn widget</p>
           <div className="p-4 bg-gray-100 rounded-lg text-left text-sm max-w-md">
-            <p className="font-medium mb-2">To make this work:</p>
-            <ol className="list-decimal pl-5 space-y-1">
-              <li>Create a LinkedIn Developer application</li>
-              <li>Request the "Share on LinkedIn" and "Sign In with LinkedIn" products</li>
-              <li>Set proper OAuth permissions and redirect URLs</li>
-              <li>Use your company ID: 26564404</li>
-            </ol>
+            <p className="font-medium mb-2">SociableKit widget will be rendered here</p>
+            <code className="block bg-gray-200 p-2 rounded text-xs overflow-x-auto whitespace-pre-wrap">
+              &lt;div class='sk-ww-linkedin-page-post' data-embed-id='25529792'&gt;&lt;/div&gt;
+            </code>
           </div>
         </div>
       </div>
     );
   }
   
-  // Production LinkedIn embed - using standard company plugin
+  // Production LinkedIn embed using SociableKit
   return (
     <div className="min-h-[400px] bg-white rounded-xl shadow-sm overflow-hidden">
       {!isLoaded && (
         <div className="h-[400px] flex items-center justify-center" aria-live="polite">
-          <div className="animate-pulse text-[#f03a37]" role="status">
+          <div className="animate-pulse text-[#0077b5]" role="status">
             <span>Loading LinkedIn content...</span>
             <span className="sr-only">Please wait while we load the LinkedIn content</span>
           </div>
         </div>
       )}
       {isLoaded && (
-        <div className="linkedin-embed-container" style={{height: '500px', overflow: 'auto'}} aria-label="LinkedIn Company Page">
-          {/* Using LinkedIn's company embed with specific company ID */}
-          <iframe 
-            src="https://www.linkedin.com/company/embed/26564404/"
-            style={{
-              width: '100%',
-              height: '100%', 
-              border: '0', 
-              borderRadius: '12px'
-            }}
-            title="G1 Ventures LinkedIn Company Page"
-            aria-label="G1 Ventures LinkedIn Company Page"
-            frameBorder="0"
-            allowFullScreen
-          ></iframe>
-          
-          {/* LinkedIn's JavaScript SDK for enhanced functionality */}
-          <script
-            type="text/javascript"
-            dangerouslySetInnerHTML={{
-              __html: `
-                window.linkedInLoad = function() {
-                  // Initialize the LinkedIn API
-                  if (window.IN && typeof window.IN.init === 'function') {
-                    window.IN.init({
-                      api_key: 'YOUR_LINKEDIN_API_KEY', // Replace with your LinkedIn API key
-                      authorize: true,
-                      onLoad: 'onLinkedInLoad'
-                    });
-                  }
-                };
-                
-                // Load the LinkedIn SDK
-                (function() {
-                  const script = document.createElement('script');
-                  script.type = 'text/javascript';
-                  script.src = 'https://platform.linkedin.com/in.js';
-                  script.async = true;
-                  script.defer = true;
-                  script.onload = window.linkedInLoad;
-                  document.getElementsByTagName('head')[0].appendChild(script);
-                })();
-              `
-            }}
-          />
+        <div className="linkedin-embed-container" style={{minHeight: '500px'}} aria-label="LinkedIn Company Page Posts">
+          {/* Using SociableKit LinkedIn widget */}
+          <div className='sk-ww-linkedin-page-post' data-embed-id='25529792'></div>
+          {/* The script is loaded in useEffect */}
         </div>
       )}
     </div>
